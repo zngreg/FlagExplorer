@@ -1,0 +1,11 @@
+@FlagExplorerApp_HostAddress = http://localhost:5100
+
+GET {{FlagExplorerApp_HostAddress}}/countries HTTP/1.1
+Accept: application/json
+
+###
+
+GET {{FlagExplorerApp_HostAddress}}/countries/USA HTTP/1.1
+Accept: application/json
+
+###

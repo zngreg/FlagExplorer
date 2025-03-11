@@ -1,0 +1,12 @@
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/bin/Debug/net9.0/FlagExplorerApp.Services.deps.json
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/bin/Debug/net9.0/FlagExplorerApp.Services.dll
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/bin/Debug/net9.0/FlagExplorerApp.Services.pdb
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.csproj.AssemblyReference.cache
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.GeneratedMSBuildEditorConfig.editorconfig
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.AssemblyInfoInputs.cache
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.AssemblyInfo.cs
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.csproj.CoreCompileInputs.cache
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.dll
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/refint/FlagExplorerApp.Services.dll
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/FlagExplorerApp.Services.pdb
+/Users/sanelengidi/DevOps/git/sgngidi/FlagExplorer/src/FlagExplorerApp.Services/obj/Debug/net9.0/ref/FlagExplorerApp.Services.dll
