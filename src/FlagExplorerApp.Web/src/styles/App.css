@@ -1,0 +1,4 @@
+.min-h-screen {
+  margin: auto 2rem;
+  min-height: calc(100vh - 4rem);
+}

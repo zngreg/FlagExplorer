@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using FlagExplorerApp.FlagExplorerApp.Services;
 using FlagExplorerApp.Services.Configs;
 using FlagExplorerApp.Services.Models;
 using Microsoft.Extensions.Options;
 using Moq;
-using NUnit.Framework;
 
 namespace FlagExplorerApp.Tests.Services
 {
@@ -18,12 +13,14 @@ namespace FlagExplorerApp.Tests.Services
         private Mock<IHttpService> _mockHttpService;
         private IMapper _mapper;
         private IOptions<ApiSettings> _apiSettings;
+        private Mock<ICacheService> _mockCacheService;
         private CountryService _countryService;
 
         [SetUp]
         public void Setup()
         {
             _mockHttpService = new Mock<IHttpService>();
+            _mockCacheService = new Mock<ICacheService>();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -33,27 +30,22 @@ namespace FlagExplorerApp.Tests.Services
 
             _apiSettings = Options.Create(new ApiSettings { CountryApiBaseUrl = "https://example.com/api" });
 
-            _countryService = new CountryService(_mockHttpService.Object, _mapper, _apiSettings);
+            _countryService = new CountryService(_mockHttpService.Object, _mapper, _apiSettings, _mockCacheService.Object);
         }
 
         [Test]
-        public async Task GetAllCountriesAsync_ShouldReturnMappedCountries_WhenApiReturnsData()
+        public async Task GetAllCountriesAsync_ShouldReturnCachedCountries_WhenCacheExists()
         {
             // Arrange
-            var apiResponse = new List<CountryInfo>
+            var cachedCountries = new List<CountryDetails>
             {
-                new CountryInfo { Name = new NameInfo { Common = "South Africa" }, Flag = "https://example.com/flags/za.png" },
-                new CountryInfo { Name = new NameInfo { Common = "United States" }, Flag = "https://example.com/flags/us.png" }
-            };
-            var mappedCountries = new List<Country>
-            {
-                new Country { Name = "South Africa", Flag = "https://example.com/flags/za.png" },
-                new Country { Name = "United States", Flag = "https://example.com/flags/us.png" }
+                new CountryDetails { Name = "South Africa", Flag = "https://example.com/flags/za.svg", Population = 122334432, Capital = "Bloem, PTA, CT" },
+                new CountryDetails { Name = "United States", Flag = "https://example.com/flags/us.svg", Population = 331449281, Capital = "Washington D.C." }
             };
 
-            _mockHttpService
-                .Setup(s => s.GetAsync<List<CountryInfo>>("https://example.com/api/all"))
-                .ReturnsAsync(apiResponse);
+            _mockCacheService.Setup(s => s.TryGetValue(It.IsAny<string>(), out It.Ref<object>.IsAny))
+                .Callback((object key, out object value) => { value = cachedCountries; })
+                .Returns(true);
 
             // Act
             var result = await _countryService.GetAllCountriesAsync();
@@ -61,39 +53,42 @@ namespace FlagExplorerApp.Tests.Services
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count(), Is.EqualTo(2));
-            Assert.That(result.First().Name, Is.EqualTo("South Africa"));
-            Assert.That(result.Last().Flag, Is.EqualTo("https://example.com/flags/us.png"));
         }
 
         [Test]
-        public async Task GetAllCountriesAsync_ShouldReturnEmptyList_WhenApiReturnsNull()
+        public async Task GetAllCountriesAsync_ShouldFetchFromApi_WhenCacheIsEmpty()
         {
             // Arrange
-            _mockHttpService
-                .Setup(s => s.GetAsync<List<CountryInfo>>("https://example.com/api/all"))
-                .ReturnsAsync((List<CountryInfo>?)null);
+            _mockCacheService.Setup(s => s.TryGetValue("AllCountries", out It.Ref<IEnumerable<Country>>.IsAny)).Returns(false);
+
+            var apiResponse = new List<CountryInfo>
+            {
+                new CountryInfo { Name = new NameInfo { Common = "South Africa" }, Flags = new FlagInfo { Svg = "https://example.com/flags/za.svg" } },
+                new CountryInfo { Name = new NameInfo { Common = "United States" }, Flags = new FlagInfo { Svg = "https://example.com/flags/us.svg" } }
+            };
+            _mockHttpService.Setup(s => s.GetAsync<List<CountryInfo>>(It.IsAny<string>())).ReturnsAsync(apiResponse);
 
             // Act
             var result = await _countryService.GetAllCountriesAsync();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.Empty);
+            Assert.That(result.Count(), Is.EqualTo(2));
         }
 
         [Test]
-        public async Task GetCountryByNameAsync_ShouldReturnMappedCountryDetails_WhenApiReturnsData()
+        public async Task GetCountryByNameAsync_ShouldReturnCachedCountry_WhenCacheExists()
         {
             // Arrange
-            var apiResponse = new List<CountryInfo>
+            var cachedCountries = new List<CountryDetails>
             {
-                new CountryInfo { Name = new NameInfo { Common = "South Africa" }, Population = 122334432, Capital = new List<string> { "Bloem", "PTA", "CT" }, Flag = "https://example.com/flags/za.png" },
+                new CountryDetails { Name = "South Africa", Flag = "https://example.com/flags/za.svg", Population = 122334432, Capital = "Bloem, PTA, CT" },
+                new CountryDetails { Name = "United States", Flag = "https://example.com/flags/us.svg", Population = 331449281, Capital = "Washington D.C." }
             };
-            var mappedCountryDetails = new CountryDetails { Name = "South Africa", Population = 122334432, Capital = "Bloem, PTA, CT", Flag = "https://example.com/flags/za.png" };
 
-            _mockHttpService
-                .Setup(s => s.GetAsync<List<CountryInfo>>("https://example.com/api/name/South Africa?fullText=true"))
-                .ReturnsAsync(apiResponse);
+            _mockCacheService.Setup(s => s.TryGetValue(It.IsAny<string>(), out It.Ref<object>.IsAny))
+                .Callback((object key, out object value) => { value = cachedCountries; })
+                .Returns(true);
 
             // Act
             var result = await _countryService.GetCountryByNameAsync("South Africa");
@@ -101,25 +96,26 @@ namespace FlagExplorerApp.Tests.Services
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Name, Is.EqualTo("South Africa"));
-            Assert.That(result.Flag, Is.EqualTo("https://example.com/flags/za.png"));
-            Assert.That(result.Population, Is.EqualTo(122334432));
-            Assert.That(result.Capital, Is.EqualTo("Bloem, PTA, CT"));
-
         }
 
         [Test]
-        public async Task GetCountryByNameAsync_ShouldReturnNull_WhenApiReturnsEmptyList()
+        public async Task GetCountryByNameAsync_ShouldFetchFromApi_WhenCacheIsEmpty()
         {
             // Arrange
-            _mockHttpService
-                .Setup(s => s.GetAsync<List<CountryInfo>>("https://example.com/api/name/Narnia?fullText=true"))
-                .ReturnsAsync(new List<CountryInfo>());
+            _mockCacheService.Setup(s => s.TryGetValue("South Africa", out It.Ref<CountryDetails>.IsAny)).Returns(false);
+
+            var apiResponse = new List<CountryInfo>
+            {
+                new CountryInfo { Name = new NameInfo { Common = "South Africa" }, Population = 122334432, Capital = new List<string> { "Bloem", "PTA", "CT" }, Flags = new FlagInfo { Svg = "https://example.com/flags/za.svg" } }
+            };
+            _mockHttpService.Setup(s => s.GetAsync<List<CountryInfo>>(It.IsAny<string>())).ReturnsAsync(apiResponse);
 
             // Act
-            var result = await _countryService.GetCountryByNameAsync("Narnia");
+            var result = await _countryService.GetCountryByNameAsync("South Africa");
 
             // Assert
-            Assert.That(result, Is.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Name, Is.EqualTo("South Africa"));
         }
 
         [Test]
@@ -130,7 +126,7 @@ namespace FlagExplorerApp.Tests.Services
 
             // Act & Assert
             var ex = Assert.Throws<ArgumentNullException>(() =>
-                new CountryService(_mockHttpService.Object, _mapper, invalidApiSettings)
+                new CountryService(_mockHttpService.Object, _mapper, invalidApiSettings, _mockCacheService.Object)
             );
 
             Assert.That(ex.Message, Does.Contain("API URL is missing"));

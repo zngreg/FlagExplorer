@@ -9,12 +9,12 @@ namespace FlagExplorerApp.Services.Configs
         {
             CreateMap<CountryInfo, Country>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Common))
-                .ForMember(dest => dest.Flag, opt => opt.MapFrom(src => src.Flag));
+                .ForMember(dest => dest.Flag, opt => opt.MapFrom(src => src.Flags.Svg));
 
             CreateMap<CountryInfo, CountryDetails>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Common))
                 .ForMember(dest => dest.Capital, opt => opt.MapFrom(src => string.Join(", ", src.Capital)))
-                .ForMember(dest => dest.Flag, opt => opt.MapFrom(src => src.Flag))
+                .ForMember(dest => dest.Flag, opt => opt.MapFrom(src => src.Flags.Svg))
                 .ForMember(dest => dest.Population, opt => opt.MapFrom(src => src.Population));
         }
     }

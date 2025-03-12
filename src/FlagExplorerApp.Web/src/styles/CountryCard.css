@@ -1,0 +1,11 @@
+.country-item {
+    background-size: "fit";
+    background-position: "center";
+    height: 150px;
+}
+
+@media (min-width: 376px) {
+    .country-item {
+        height: 85px;
+    }
+}

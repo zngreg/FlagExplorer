@@ -14,4 +14,8 @@
     <ProjectReference Include="../FlagExplorerApp.Services/FlagExplorerApp.Services.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+  <CoverletExclude>[Program]*</CoverletExclude>
+</PropertyGroup>
+
 </Project>
