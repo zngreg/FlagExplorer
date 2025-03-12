@@ -2,6 +2,6 @@ namespace FlagExplorerApp.FlagExplorerApp.Apis
 {
     public interface ICountryApi
     {
-        void RegisterRoutes(WebApplication app);
+        void RegisterRoutes(IEndpointRouteBuilder endpoints);
     }
 }

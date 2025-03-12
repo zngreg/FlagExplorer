@@ -3,9 +3,9 @@ namespace FlagExplorerApp.Middlewares
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly Logger<ErrorHandlingMiddleware> _logger;
+        private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-        public ErrorHandlingMiddleware(RequestDelegate next, Logger<ErrorHandlingMiddleware> logger)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -19,12 +19,12 @@ namespace FlagExplorerApp.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An error occurred: {ex.Message}", ex);
+                var corelationId = Guid.NewGuid().ToString();
+                _logger.LogError(ex, $"An error occurred with corelationId: {corelationId}, and message: {ex.Message}");
 
-                // Return a generic error response
                 httpContext.Response.StatusCode = 400;
                 httpContext.Response.ContentType = "application/json";
-                var errorResponse = new { message = "An unexpected error occurred." };
+                var errorResponse = new { message = $"An unexpected error occurred. Contact administrator. CorelationId: {corelationId} " };
                 await httpContext.Response.WriteAsJsonAsync(errorResponse);
             }
         }
