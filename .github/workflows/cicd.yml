@@ -24,7 +24,7 @@ jobs:
           dotnet-version: "9.x"
 
       - name: Run Backend Tests
-        run: dotnet test **/*.Tests.csproj --collect:"XPlat Code Coverage"
+        run: dotnet test FlagExplorer.sln --collect:"XPlat Code Coverage"
 
   test-frontend:
     name: Frontend Tests
