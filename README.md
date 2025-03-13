@@ -46,7 +46,7 @@ FlagExplorerApp is an API that provides country data. It fetches data from exter
 ### API Endpoints
 
 - **GET /api/countries**: Fetches countries data.
-- **GET /api/countries/{name}**: Fetches countries data for g given country name.
+- **GET /api/countries/{name}**: Fetches country data for a given country name.
 
 ## Contributing
 
