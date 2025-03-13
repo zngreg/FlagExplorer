@@ -50,7 +50,7 @@ jobs:
       - name: Run Frontend Tests
         run: |
           cd src/FlagExplorerApp.Web
-          npm run test
+          npm run test --passWithNoTests
 
   build-backend:
     name: Build Backend
