@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { getAllCountries } from "../services/countryApi";
+import { getAllCountries } from "../services/CountryApi";
 import CountryCard from "./CountryCard";
-import { Country } from "../interfaces/ICountry";
+import { ICountry } from "../interfaces/ICountry";
 import "../styles/CountryGrid.css";
 
 const CountryGrid = () => {
-  const [countries, setCountries] = useState<Country[]>([]);
+  const [countries, setCountries] = useState<ICountry[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorObj, setErrorObj] = useState(null);
 
   useEffect(() => {
     getAllCountries()
       .then((data) => {
-        setCountries(data as Country[]);
+        setCountries(data as ICountry[]);
         setLoading(false);
       })
       .catch((error) => {

@@ -16,6 +16,7 @@ const CountryCard: React.FC<CountryCardProps> = ({ name, flag }) => {
         backgroundSize: "cover",
         backgroundPosition: "center"
       }}
+      aria-label={name}
     >
       <div className="absolute inset-0 bg-black bg-opacity-10 hover:bg-opacity-20 transition"></div>
     </Link>

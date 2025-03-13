@@ -1,4 +1,4 @@
-export interface CountryDetailsProps {
+export interface ICountryDetails {
     name: string;
     flag: string;
     population: number;

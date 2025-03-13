@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getCountryDetails } from "../services/countryApi";
-import { CountryDetailsProps } from "../interfaces/ICountryDetails";
+import { getCountryDetails } from "../services/CountryApi";
+import { ICountryDetails } from "../interfaces/ICountryDetails";
 import "../styles/CountryDetails.css";
 
 const CountryDetails = () => {
   const { name } = useParams<{ name: string }>();
-  const [country, setCountry] = useState<CountryDetailsProps | null>(null);
+  const [country, setCountry] = useState<ICountryDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorObj, setErrorObj] = useState(null);
 
@@ -14,7 +14,7 @@ const CountryDetails = () => {
     if (name) {
       getCountryDetails(name)
         .then((data) => {
-          setCountry(data as CountryDetailsProps);
+          setCountry(data as ICountryDetails);
           setLoading(false);
         })
         .catch((error) => {
