@@ -24,11 +24,7 @@ jobs:
           dotnet-version: "9.x"
 
       - name: Run Backend Tests
-        run: |
-          for testProject in $(find src -name "*.Tests.csproj"); do
-            echo "Running tests in $testProject"
-            dotnet test "$testProject" --collect:"XPlat Code Coverage"
-          done
+        run: dotnet test **/*.Tests.csproj --collect:"XPlat Code Coverage"
 
   test-frontend:
     name: Frontend Tests
@@ -65,16 +61,17 @@ jobs:
         with:
           dotnet-version: "9.x"
 
-      - name: Build .NET Backend
-        run: |
-          cd src
-          dotnet publish -c Release -o output
+      - name: Build Solution
+        run: dotnet build FlagExplorer.sln --configuration Release
+
+      - name: Publish Backend
+        run: dotnet publish FlagExplorer.sln --configuration Release -o output
 
       - name: Upload Backend Artifact
         uses: actions/upload-artifact@v4
         with:
           name: FlagExplorerApp
-          path: src/output
+          path: output/
 
   build-frontend:
     name: Build Frontend
@@ -116,7 +113,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: FlagExplorerApp
-          path: src
+          path: output/
 
       - name: Download Frontend Artifact
         uses: actions/download-artifact@v4
